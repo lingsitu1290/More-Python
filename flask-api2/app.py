@@ -41,6 +41,10 @@ class Item(Resource):
         # 201 status code is "created", 202 is "accepted"
         return item, 201
 
+    def delete(self, name):
+        global items
+        items = list(filter(lambda x: x['name'] != name, items))
+        return {'message': 'Item deleted'}
 
 class ItemList(Resource):
     def get(self):
