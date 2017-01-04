@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Resource, Api
 
 app = Flask(__name__)
@@ -22,13 +22,19 @@ class Item(Resource):
         return {'item': None}, 404
 
     def post(self, name):
-        item = {'name': name, 'price': 12.00}
+        data = request.get_json()
+
+        item = {'name': name, 'price': data['price']}
         items.append(item)
         # 201 status code is "created", 202 is "accepted"
         return item, 201
 
+class ItemList(Resource):
+    def get(self):
+        return {'items': items}
 
 api.add_resource(Item, '/item/<string:name>')
+api.add_resource(ItemList, '/items')
 
 
 if __name__ == '__main__':
