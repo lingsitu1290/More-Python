@@ -15,15 +15,20 @@ items = []
 
 class Item(Resource):
     def get(self, name):
-        for item in items:
-            if item['name'] == name:
-                return item
+        # This section can be replaced with the filter/ lambda function
+        # for item in items:
+        #     if item['name'] == name:
+        #         return item
+        item = next(filter(lambda x: x['name'] == name, items), None)
         # When can't find the item, thus 404(not found)
-        return {'item': None}, 404
+        return {'item': item}, 200 if item else 404
 
     def post(self, name):
-        data = request.get_json()
+        # If the item exists:
+        if next(filter(lambda x: x['name'] == name, items), None) is not None:
+            return {'message': "An item with name '{}' already exists.".format(name)}, 400
 
+        data = request.get_json()
         item = {'name': name, 'price': data['price']}
         items.append(item)
         # 201 status code is "created", 202 is "accepted"
